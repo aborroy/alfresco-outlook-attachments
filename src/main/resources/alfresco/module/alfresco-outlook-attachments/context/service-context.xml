@@ -26,6 +26,7 @@
         <property name="serviceRegistry" ref="ServiceRegistry"/>
         <property name="attachmentsExtractorMode" value="${imap.attachments.mode}"/>
         <property name="mimetypeService" ref="mimetypeService"/>
+        <property name="attachmentsFolderSuffix" value="${imap.attachments.folder.suffix}" />
     </bean>
 
     <bean id="${project.artifactId}_outlookAttachmentsBehaviour" class="org.alfresco.behaviour.ExtractOutlookAttachments" init-method="init">

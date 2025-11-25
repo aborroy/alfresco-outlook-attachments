@@ -22,6 +22,7 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hmef.HMEFMessage;
@@ -35,6 +36,8 @@ public class AttachmentsExtractor
         SEPARATE    // All attachments for each email will be extracted to separate folder.
     }
 
+    private static final String DEFAULT_ATTACHMENTS_SUFFIX = "-attachments";
+
     private Log logger = LogFactory.getLog(AttachmentsExtractor.class);
 
     private FileFolderService fileFolderService;
@@ -42,6 +45,7 @@ public class AttachmentsExtractor
     private ServiceRegistry serviceRegistry;
     private AttachmentsExtractorMode attachmentsExtractorMode;
     private MimetypeService mimetypeService;
+    private String attachmentsFolderSuffix;
 
     public void extractAttachments(NodeRef messageRef, MimeMessage originalMessage) throws IOException, MessagingException
     {
@@ -56,7 +60,8 @@ public class AttachmentsExtractor
             case SEPARATE:
             default:
                 String messageName = (String) nodeService.getProperty(messageRef, ContentModel.PROP_NAME);
-                attachmentsFolderName = messageName + "-attachments";
+                String effective = getEffectiveFolderSuffix();
+                attachmentsFolderName = messageName + effective;
                 createFolder = true;
                 break;
         }
@@ -183,6 +188,36 @@ public class AttachmentsExtractor
         }
     }
 
+    private String sanitizeSuffix(String raw) {
+        if (raw == null) return null;
+        // trim and remove surrounding whitespace
+        String s = raw.trim();
+        // remove path separators and NULL char
+        s = s.replaceAll("[/\\\\\\u0000]", "");
+        // collapse multiple spaces
+        s = s.replaceAll("\\s{2,}", " ");
+        // optionally remove surrounding quotes
+        if (s.startsWith("\"") && s.endsWith("\"") && s.length() > 1) {
+            s = s.substring(1, s.length() - 1);
+        }
+        return s;
+    }
+
+    private String getEffectiveFolderSuffix() 
+    {
+        if (attachmentsFolderSuffix == null) {
+            return DEFAULT_ATTACHMENTS_SUFFIX;
+        }
+        
+        String cleaned = sanitizeSuffix(attachmentsFolderSuffix);
+        
+        if (StringUtils.isBlank(cleaned) || cleaned.startsWith("${")) {
+            return DEFAULT_ATTACHMENTS_SUFFIX;
+        }
+        
+        return cleaned.startsWith("-") ? cleaned : "-" + cleaned;
+    }
+
     public String generateUniqueFilename(NodeRef destFolderNodeRef, String fileName)
     {
         if(fileFolderService.searchSimple(destFolderNodeRef, fileName) != null)
@@ -229,6 +264,11 @@ public class AttachmentsExtractor
     public void setMimetypeService(MimetypeService mimetypeService)
     {
         this.mimetypeService = mimetypeService;
+    }
+
+    public void setAttachmentsFolderSuffix(String suffix)
+    {
+        this.attachmentsFolderSuffix = suffix;
     }
 
 }
