@@ -11,6 +11,9 @@ Following parameters can be adapted using `alfresco-global.properties` file or J
 extract.attachments.mimetype.list=message/rfc822,application/vnd.ms-outlook
 # SAME, SEPARATE
 imap.attachments.mode=SEPARATE
+# Folder's suffix in SEPARATE mode
+# Fallback to -attachments if null or couldn't be read
+imap.attachments.folder.suffix=-attachment
 ```
 
 ## Building
