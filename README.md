@@ -1,6 +1,15 @@
 # Alfresco Outlook Attachments Extractor
 
-This is an ACS project for Alfresco SDK 4.4 (ACS 7.2).
+This is an ACS project for Alfresco SDK 4.4 (ACS 26.2, Java 21).
+
+## Compatibility
+
+| Alfresco (ACS) | Java | Mail API | Branch / tag |
+|---|---|---|---|
+| 26.2 | 21+ | `jakarta.mail` | `master` |
+| 7.2 | 11+ | `javax.mail` | tag of the last ACS 7.x commit |
+
+The move to ACS 26.2 replaces `javax.mail` / `javax.activation` with their Jakarta counterparts, so the latest code does not run on older Alfresco or Java versions. Use the legacy tag for those.
 
 When uploading an Outlook Message File (EML, MSG) to Alfresco, this addon extracts the attachment files and stores them in the `SAME` folder or in a `SEPARATE` folder.
 
