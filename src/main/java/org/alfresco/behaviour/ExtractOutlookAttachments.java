@@ -13,9 +13,9 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
-import javax.activation.MimetypesFileTypeMap;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
+import jakarta.activation.MimetypesFileTypeMap;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
